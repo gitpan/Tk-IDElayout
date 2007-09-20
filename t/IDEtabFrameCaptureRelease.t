@@ -14,6 +14,9 @@ use Tk::IDEtabFrame;
 use Tk::IDElayout;
 use Tk::Text;
 
+# With nothing on the command line, the script will quit after the text completes
+my $dontExit = shift @ARGV;
+
 require 'testTextEdit'; # get the syntax highlighting text edit subs
 
 print "1..1\n";
@@ -47,21 +50,23 @@ $dtf->pack(-expand => 1, -fill => 'both');
 
 # After 2 seconds, delete the tab and make a toplevel.
 $TOP->after(2000, sub{
+                my $contents = $textWidgets[0];
                 $dtf->delete("IDEtabFrame.pm");
                 
                 print "Releasing IDEtabFrame.pm tab to a toplevel...\n";
                 
-                my $contents = $textWidgets[0];
                 $contents->wmRelease;
  
                 # MainWindow needed here because wmReleased widget don't properly inherit from
                 #   Tk::Toplevel
                 $contents->MainWindow::attributes(-toolwindow => 1) if( $^O =~ /mswin32/i);
                 $contents->MainWindow::title("IDEtabFrame.pm");
-                $contents->MainWindow::deiconify; # ARGH!
+                $contents->MainWindow::deiconify;
                 $contents->raise;
 });
-                
+          
+
+
 # After 2 seconds, put back as a tab
 $TOP->after(4000, sub{
                 
@@ -83,6 +88,14 @@ $TOP->after(4000, sub{
 
 });
                 
+
+# Quit the test after two seconds
+unless( $dontExit){
+    $TOP->after(6000,sub{
+            print "Test Complete... Exiting\n";
+            $TOP->destroy;
+    });
+}
 
 
 

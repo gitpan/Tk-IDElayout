@@ -182,7 +182,7 @@ real object in this hash.
 =cut
 
 package Tk::IDEtabFrame;
-our ($VERSION) = ('0.3');
+our ($VERSION) = ('0.31');
 
 use Carp;
 use strict;
@@ -960,6 +960,13 @@ If the tabclose option is 1, this installs a callback to our TabRemove, rather t
 Because L<Tk::DynaTabFrame> calls its I<TabRemove> directly (Using \&TabRemove), rather than by a method call, this tabclose method is
 needed to call our overriden I<TabRemove> method.
         
+The default code ref installed here is called when the close button pressed on the tab.
+It explicitly destroys the widget contained in the tab. This is needed because the widgets in IDElayout
+are created as childs of the main widget, and not childs of the IDEtabframe widget.
+This is done so the widgets can be dragged around in the GUI.
+
+Since the widgets are created as childs of the main window, and not the IDEtabframe tabs,
+just deleting the tab won't delete the widget. So we delete it manually here.
 
 =cut
 
@@ -969,7 +976,36 @@ sub tabclose {
 	return $this->SUPER::tabclose() unless defined($close);
 
         if (ref($close) ne 'CODE' && $close == 1){ # Default close button desired
-                my $subRef = sub{ my $self = shift; $self->TabRemove(@_)}; # Sub ref to call our TabRemove
+                
+                # This code ref called when the close button pressed on the tab
+                #   It destroys the widget contents. This is needed because the widgets in IDElayout
+                #   are created as childs of the main widget, and not childs of the IDEtabframe widget.
+                #   This is done so the widgets can be dragged around in the GUI.
+                #   Since the widgets are created as childs of the main window, and not the IDEtabframe tabs,
+                #    just deleting the tab won't delete the widget. So we delete it manually here.
+                my $subRef = sub{
+                        my $self = shift;
+                        my $tabName = shift;
+
+                        # Make lookup of client names to client frames
+                        my $clientHash = $self->{ClientHash};
+                        my $clientList = $self->{ClientList};
+                        my @clientFrames =  map $clientList->[$clientHash->{$_}][0], keys %$clientHash;
+                        
+                        my %clientFrames;
+                        @clientFrames{ keys %$clientHash} = @clientFrames;
+                        
+                        my $clientFrame = $clientFrames{$tabName};
+                        #print "clientFrame = $clientFrame\n";
+                        
+                        # get the frame contents, explicitly destroy it
+                        my ($pageContents) = $clientFrame->packSlaves();
+                        $pageContents->destroy();
+                        
+                        #print "Page contents = $pageContents\n";
+                        
+                        $self->TabRemove($tabName)
+                }; # Sub ref to call our TabRemove
                 return $this->SUPER::tabclose($subRef);
         }
         

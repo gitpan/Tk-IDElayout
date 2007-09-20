@@ -5,8 +5,8 @@
 #     After initial window creation, frames inside the panewindow should resize proportionaly when the
 #       whole window is resized
 
-package main;
-
+# With nothing on the command line, the script will quit after the text completes
+my $dontExit = shift @ARGV;
 
 use Tk;
 
@@ -73,7 +73,14 @@ $pwH->pack(qw/-side top -expand yes -fill both /);
     $pw2->add($f1, -expandfactor => 1,  $f2, -expandfactor => 1);
     #$pw2->paneconfigure( $f2, -sticky => 'nsew');
     #$TOP->bind('<Motion>', sub{ print "Motion\n"});
-    
+
+    # Quit the test after two seconds
+    unless( $dontExit){
+            $TOP->after(2000,sub{
+                    print "Test Complete... Exiting\n";
+                    $TOP->destroy;
+            });
+    }
     
 MainLoop;
 

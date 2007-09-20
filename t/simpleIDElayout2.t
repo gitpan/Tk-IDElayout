@@ -6,6 +6,9 @@ use Tk::IDElayout;
 use Tk::IDEtabFrame;
 use Tk::Text;
 
+# With nothing on the command line, the script will quit after the text completes
+my $dontExit = shift @ARGV;
+
 require 'testTextEdit'; # get the syntax highlighting text edit subs
 
 print "1..1\n";
@@ -126,6 +129,13 @@ $layout->pack(-side => 'top', -fill => 'both', -expand => 'yes');
 #        $dtf2->TabReconfig();
 #});
 
+# Quit the test after two seconds
+unless( $dontExit){
+    $TOP->after(4000,sub{
+            print "Test Complete... Exiting\n";
+            $TOP->destroy;
+    });
+}
 
 MainLoop;
 

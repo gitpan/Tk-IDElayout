@@ -361,7 +361,7 @@ The last side of the frame (e.g. left, right, top, bot) that the mouse pointer w
 
 package Tk::IDElayout;
 
-our ($VERSION) = ('0.3');
+our ($VERSION) = ('0.31');
 
 use strict;
 
@@ -532,7 +532,9 @@ sub frameStructure{
 	}
 	
 	# Create the directed graph structure used to store the layout
-	my $frameGraph = Graph::Directed->new();
+        my @createArgs = ();
+        @createArgs = ( compat02 => 1 ) if( defined($Graph::VERSION) and $Graph::VERSION > .3);
+	my $frameGraph = Graph::Directed->new(@createArgs);
 
  	# Build Graph Struct
 	foreach my $node (@$nodes) {  # Build Nodes

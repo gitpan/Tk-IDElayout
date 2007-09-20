@@ -50,7 +50,7 @@ None
 =cut
 
 package Tk::IDEdragShadow;
-our ($VERSION) = ('0.3');
+our ($VERSION) = ('0.31');
 
 use Carp;
 use strict;
