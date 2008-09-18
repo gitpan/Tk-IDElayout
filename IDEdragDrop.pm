@@ -4,7 +4,7 @@ require Tk::Label;
 use Tk::IDEdragShadowToplevel;
 
 
-our ($VERSION) = ('0.31');
+our ($VERSION) = ('0.32');
 
 use base  qw( Tk::DragDrop);
 

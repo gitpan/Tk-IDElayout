@@ -2,6 +2,7 @@ use 5.6.0;
 use Cwd;
 use Config;
 no  lib '.';
+use ExtUtils::MakeMaker;
 BEGIN
  {
  
@@ -9,14 +10,29 @@ BEGIN
 
   $IsWin32 = ($^O eq 'MSWin32' || $Config{'ccflags'} =~ /-D_?WIN32_?/);
 
-  $VERSION = '0.31';
+  $VERSION = '0.32';
   $win_arch = shift @ARGV if @ARGV and $ARGV[0] =~ /^(open32|pm|x|MSWin32)$/;
   require('fix_4_os2.pl'), OS2_massage() if $^O eq 'os2';
 
   $win_arch = ($IsWin32) ? 'MSWin32' : 'x'
     if not defined $win_arch; # Currently 'x', 'pm', 'open32', 'MSWin32'
 
-  require "./myConfig";
+    eval{ require "./myConfig"; };
+    if( $@ ){
+            print "\n#### Error requiring 'myConfig': Perhaps you don't have Tk installed ###\n";
+            print "####  This module requires a Tk installation                           ###\n";
+            
+            # Write out a simple makefile with PREREQ_PM, so CPAN will at least detect our
+            #   prerequesites.
+            WriteMakefile( 
+                'VERSION_FROM'  => 'IDElayout.pm',
+                'NAME'     => 'Tk::IDElayout',
+                'DISTNAME' => "Tk-IDElayout",
+                'PREREQ_PM'  => { Tk => 804.027, Tk::DynaTabFrame => 0.23, Graph => 0.20105}
+                );
+            exit();
+    }
+    
   # use lib ($Tk::MMutil::dir=getcwd);
   
   

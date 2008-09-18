@@ -361,7 +361,7 @@ The last side of the frame (e.g. left, right, top, bot) that the mouse pointer w
 
 package Tk::IDElayout;
 
-our ($VERSION) = ('0.31');
+our ($VERSION) = ('0.32');
 
 use strict;
 
@@ -415,12 +415,17 @@ sub Populate {
             ];
         
 	# Create Placeholder frames
-	my $menuFrame       = $cw->Frame()->pack(-side => 'top', -fill => 'x', -expand => 0);
-	my $toolbarFrame    = $cw->Frame()->pack(-side => 'top', -fill => 'x', -expand => 0);
-	my $mainPW          = $cw->Frame()->pack(-side => 'top', -fill => 'both', -expand => 1);
-	my $statusLineFrame = $cw->Frame()->pack(-side => 'top', -fill => 'x', -expand => 0);
-	
-	
+        # We use the grid geometry manager here for better control
+        #    Using the pack geom manager, the status line along the bottom would disappear when
+        #    the frame was shrunk vertically.
+	my $menuFrame       = $cw->Frame()->grid( -column => 0, -row => 0, -sticky => 'ew');
+	my $toolbarFrame    = $cw->Frame()->grid( -column => 0, -row => 1, -sticky => 'ew');
+	my $mainPW          = $cw->Frame()->grid( -column => 0, -row => 2, -sticky => 'nsew');
+	my $statusLineFrame = $cw->Frame()->grid( -column => 0, -row => 3, -sticky => 'ew');
+
+        # 
+        $cw->gridColumnconfigure(0, -weight => 1); # Allow the whole column to expand
+        $cw->gridRowconfigure(2, -weight => 1); # The mainPW window can expand, anything else doesn't
 	
 	$cw->SUPER::Populate($args);
 	$cw->ConfigSpecs(	

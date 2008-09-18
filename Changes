@@ -1,6 +1,11 @@
 Summary of Changes to Tk::IDElayout
 
+Release 0.32:  9/18/08
 
+ * Fixed bug where the status line would vanish if the whole window was expanded and then shrunk.
+ * Updated Makefile.PL so CPAN (hopefully) will understand that Tk is required for this module.
+     (Since Tk was required for just running the Makefile.PL, this was more complicated than just
+      adding to PREREQ_PM.)
 
 Release 0.31:  9/20/07
 
