@@ -361,7 +361,7 @@ The last side of the frame (e.g. left, right, top, bot) that the mouse pointer w
 
 package Tk::IDElayout;
 
-our ($VERSION) = ('0.32');
+our ($VERSION) = ('0.33');
 
 use strict;
 
@@ -398,6 +398,8 @@ sub Populate {
 	my $widgets;
 	if ( defined( $args->{-widgets} ) ) {
 		$widgets = $args->{-widgets};
+                $cw->{Configure}{-widgets} = $widgets; # Make sure $widgets is populated before other options
+
 	}
 	else {
 		croak("Error: -widgets not supplied when creating IDElayout widget\n");

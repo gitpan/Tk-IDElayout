@@ -7,7 +7,7 @@
 ###
 
 use Tk;
-use Tk::DragShadow;
+use Tk::IDEdragShadow;
 
 my $mw = new MainWindow ();
 
@@ -21,7 +21,7 @@ $mw->after(2000,sub {
 	print "Frame G = $geometry\n";
 	print "MW G = ".$mw->geometry."\n";
 	
-	my $widget = $Frame->DragShadow(-geometry => $geometry);
+	my $widget = $Frame->IDEdragShadow(-geometry => $geometry);
 	
 	$mw->after(2000, sub{
 		$widget->placeForget();
